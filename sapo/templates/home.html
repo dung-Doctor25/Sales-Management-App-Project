@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+       
+            <h1 class="text-center"> Chào mừng {{ request.user }} đến với Sapo</h1>
+            <h3 class="text-center">Website for Sell management Products</h3>
+            <div class="text-center">
+                <a href="{% url 'direct_sale' %}" class="btn btn-primary">Shop Now</a>
+        
+        </div>
+    </div>
+</div>
+{% endblock content%}

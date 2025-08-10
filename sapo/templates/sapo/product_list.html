@@ -1,0 +1,91 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body {
+        background-color: rgb(231, 231, 231);
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: absolute; top: 0; left: 249px; right: 0; z-index: 1000;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="{% url 'product_list' %}" style="margin-left: auto;font-family: 'Roboto', sans-serif;"><strong>Danh sách sản phẩm</strong></a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link btn btn-outline-secondary me-2" aria-current="page" href="#"><i class="bi bi-patch-question me-1"></i><font face="Verdana">Trợ giúp</font></a>
+        <a class="nav-link btn btn-outline-secondary me-2" aria-current="page" href="#"><i class="bi bi-chat-heart me-1"></i><font face="Verdana">Góp ý</font></a>
+        <a class="nav-link btn btn-outline-secondary me-2" aria-current="page" href="#"><i class="bi bi-bank me-2"></i><font face="Verdana">Vay vốn kinh doanh</font></a>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid mt-5">
+  <div class="d-flex align-items-center mb-3 justify-content-end">
+    <a href="{% url 'add_product' %}" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm</a>
+    <a href="{% url 'product_csv' %}" class="btn btn-primary btn-lg ms-2"><i class="bi bi-file-earmark-excel me-2"></i>Xuất file</a>
+    <a href="{% url 'product_import' %}" class="btn btn-primary btn-lg ms-2"><i class="bi bi-file-earmark-excel me-2"></i>Nhập file</a>
+  </div>
+<form method="POST" action="{% url 'product_list' %}" class="d-flex">
+  {% csrf_token %}
+  <input type="text" name="name" class="form-control me-2" placeholder="Tìm kiếm sản phẩm">
+  <select name="category" class="form-select">
+    <option value="">-- Chọn loại --</option>
+    {% for const in const %}
+    <option value="{{ const.category }}">{{ const.category }}</option>
+    {% endfor %}
+  </select>
+  <div class="container">
+    <button type="submit" class="btn btn-sm btn-outline-primary mt-1" style="padding: 5px 10px;"><i class="bi bi-search me-2"></i>Tìm kiếm</button>
+  </div>
+  </form>
+  <br>
+  <table class="table"> 
+    <thead class="table-info">
+      <tr>
+        <th>Ảnh</th>
+        <th>Sản phẩm</th>
+        <th>Loại</th>
+        <th>Nhãn hiệu</th>
+        <th>Kho</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>
+            
+            <img src="{{ product.imageURL }}" alt="{{ product.name }}" class="img-fluid rounded" width="100" height="100">
+            
+          </td>
+        <td class="align-middle">
+            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+        </td>
+        <td class="align-middle">
+
+                {{ product.category }}
+          
+        </td>    
+        <td class="align-middle">
+
+                {{ product.brand }}
+
+        </td>
+        <td class="align-middle">
+
+                {{ product.stock }}
+
+        </td>
+      </tr>
+          {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+{% endblock content %}
+

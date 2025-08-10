@@ -1,0 +1,9 @@
+# Bỏ qua thư mục virtual environment
+evn/
+
+# Bỏ qua file chứa thông tin nhạy cảm
+credentials.json
+
+# (Tùy chọn) Bỏ qua các file Python cache
+__pycache__/
+*.pyc

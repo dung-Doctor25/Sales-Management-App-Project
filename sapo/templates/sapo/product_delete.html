@@ -1,0 +1,100 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<!-- <div class="container">
+    <div class="col-auto">
+        <div class="col-md-6 offset-md-3"> -->
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="col">
+                    <h1 style="text-align: center;">Bạn muốn xóa sản phẩm: {{ product.name }}?</h1>
+                    <hr>
+                    <div class="row">
+                        <button type="submit" class="btn btn-danger btn-block btn-lg">Xóa</button>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <a href="{% url 'product_list' %}" class="btn btn-secondary btn-block btn-lg">Hủy</a>
+                    </div>
+                </div>
+            </form>
+        <!-- </div>
+    </div>
+</div> -->
+
+    <div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;float: left;">
+        <h5>Thông tin sản phẩm</h5>
+        <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+            <div class="col-sm-6 mb-2" style="width: 32%;"> 
+            <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td style="width: 50%;"><label for="id_code" class="form-label">Mã SKU:</label></td>
+                    <td style="width: 50%;">{{ product.code }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Mã Barcode:</label></td>
+                    <td>{{ product.qr_code }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_mass" class="form-label">Khối lượng:</label></td>
+                    <td>{{ product.mass }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_unit" class="form-label">Đơn vị tính:</label></td>
+                    <td>{{ product.unit }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_category" class="form-label">Phân loại:</label></td>
+                    <td>{{ product.category }}</td>
+                </tr>
+            </tbody>
+            </table>
+            <a href="#" onclick="$('#description').toggle(); return false;">Xem mô tả</a>
+            <table id="description" style="display: none;">
+            <tbody>
+                <tr>
+                    <td colspan="2">{{ product.description|linebreaks }}</td>
+                </tr>
+            </tbody>
+            </table>
+    
+            </div>
+    
+            <div class="col-sm-6 mb-2" style="width: 32%;">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td style="width: 50%;"><label for="id_category" class="form-label">Loại sản phẩm:</label></td>
+                            <td style="width: 50%;">{{ product.category }}</td>
+                        </tr>
+                        <tr>
+                            <td><label for="id_brand" class="form-label">Nhãn hiệu:</label></td>
+                            <td>{{ product.brand }}</td>
+                        </tr>
+                        <tr>
+                            <td><label for="id_tag" class="form-label">Tags:</label></td>
+                            <td>{{ product.tag }}</td>
+                        </tr>
+                        <tr>
+                            <td><label for="id_date_create" class="form-label">Ngày tạo:</label></td>
+                            <td>{{ product.date_create|date:"d/m/Y" }}</td>
+                        </tr>
+                        <tr>
+                            <td><label for="id_date_update" class="form-label">Ngày cập nhật cuối :</label></td>
+                            <td>{{ product.updated_at|date:"d/m/Y" }}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+    
+            </div>
+            <div class="col-sm-6 mb-2"style="width: 35%;">
+                <img src="{{ product.image.url }}" alt="{{ product.image }}" class="img-fluid rounded" >
+            </div>
+        </div>
+    </div>
+
+{% endblock content%}

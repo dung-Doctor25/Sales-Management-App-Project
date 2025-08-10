@@ -1,0 +1,245 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body {
+        background-color: rgb(231, 231, 231);
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: absolute; top: 0; left: 249px; right: 0; z-index: 1000;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand nav-link btn btn-outline-secondary " href="{% url 'customer_list' %}" style="margin-left: auto;font-family: 'Roboto', sans-serif;"><i class="bi bi-caret-left-fill me-2"></i><strong>Quay lại danh sách khách hàng</strong></a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="btn btn-outline-danger me-3" href="{% url 'delete_customer' customer.pk %}">Xóa khách hàng</a>
+        <a class="btn btn-outline-primary me-3" href="#">Tạo phiếu thu/chi </a>
+        <a class="btn btn-primary me-3" href="{% url 'update_customer' customer.pk %}">Cập nhật</a>  
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid mt-5">
+<div class="d-flex flex-column align-items-center text-center">
+    <h1 class="display-6"><strong>{{ customer.name }}</strong></h1>
+</div>
+</div>
+<!-- ------------------------------------------------------------------------------------ -->
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;width: 66%;float: left;">
+    <h5>Thông tin sản phẩm</h5>
+    <hr>
+<div class="container-fluid mt-3">
+    <div class="row mb-3">
+        <div class="col-sm-6 mb-2" style="width: 50%;"> 
+        <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td style="width: 50%;"><label for="id_date_of_birth" class="form-label">Ngày sinh</label></td>
+                <td style="width: 50%;">:&nbsp;&nbsp;{{ customer.date_of_birth|date:"d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_sex" class="form-label">Giới tính</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.sex }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_phone" class="form-label">Số điện thoại</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.phone }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_email" class="form-label">Email</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.email }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_employee_care" class="form-label">Nhân viên phục vụ</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.employee_care }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_tag" class="form-label">Tags</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.tag }}</td>
+            </tr>
+
+
+        </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6 mb-2" style="width: 50%;"> 
+        <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td><label for="id_segment" class="form-label">Phân loại</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.segment }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_code" class="form-label">Mã khách hàng</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.code }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_tax_code" class="form-label">Mã số thuế</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.tax_code }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_website" class="form-label">Website</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.website }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_website" class="form-label">Mô tả</label></td>
+                <td>:&nbsp;&nbsp;{{ customer.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+</div>
+<!-- ------------------------------------------------------------------------------------ -->
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;width: 33%; float: right;">
+    <h5>Thông tin gợi ý khi bán hàng</h5>
+    <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+            <div class="col-sm-6 mb-2" style="width: 100%;"> 
+            <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td style="width: 60%;"><label for="id_qr_code" class="form-label">Chính sách giá bán</label></td>
+                    <td style="width: 30%;">:&nbsp;&nbsp;{{ customer.price_policy }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 60%;"><label for="id_code" class="form-label">Chiết khấu khách hàng</label></td>
+                    <td style="width: 30%;">:&nbsp;&nbsp;{{ customer.customer_discount }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Phương thức thanh toán</label></td>
+                    <td>:&nbsp;&nbsp;{{ customer.payment }}</td>
+                </tr>
+
+            </tbody>
+            </table>
+    
+            </div>
+        </div>
+    </div>
+    
+</div>
+<!-- ------------------------------------------------------------------------------------ -->
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;width: 66%; float: left;">
+    <h5>Thông tin mua hàng</h5>
+    <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+            <div class="col-sm-6 mb-2" style="width: 50%;"> 
+            <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td><label for="id_mass" class="form-label">Tổng chi tiêu</label></td>
+                    <td>:&nbsp;&nbsp;0</td>
+                </tr>
+                <tr>
+                    <td><label for="id_unit" class="form-label">Tổng SL đơn hàng</label></td>
+                    <td>:&nbsp;&nbsp;0</td>
+                </tr>
+                <tr>
+                    <td><label for="id_category" class="form-label">Ngày cuối cùng mua hàng</label></td>
+                    <td>:&nbsp;&nbsp;0</td>
+                </tr>
+            </tbody>
+            </table>
+    
+            </div>
+            <div class="col-sm-6 mb-2" style="width: 50%;"> 
+                <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td><label for="id_mass" class="form-label">Tổng sản lượng SP đã bán</label></td>
+                        <td>:&nbsp;&nbsp;0</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_unit" class="form-label">Tổng Sl sản phẩm hòa vốn</label></td>
+                        <td>:&nbsp;&nbsp;0</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_category" class="form-label">Công nợ hiện tại</label></td>
+                        <td>:&nbsp;&nbsp;0</td>
+                    </tr>
+                </tbody>
+                </table>
+        
+                </div>
+        </div>
+    </div>
+</div>
+
+<!-- ------------------------------------------------------------------------------------ -->
+<div class="container-fluid mt-5 ms-10" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white; height: 280px; width: 33%; float: right;">
+    <h5>Thông tin tích điểm</h5>
+    <hr>
+    <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td><label for="id_mass" class="form-label">Điểm hiện tại</label></td>
+                <td>:&nbsp;&nbsp;0</td>
+            </tr>
+            <tr>
+                <td><label for="id_unit" class="form-label">Hạng thẻ hiện tại</label></td>
+                <td>:&nbsp;&nbsp;0</td>
+            </tr>
+            <tr>
+                <td><label for="id_category" class="form-label">Ngày hết hạn thẻ</label></td>
+                <td>:&nbsp;&nbsp;0</td>
+            </tr>
+            <tr>
+                <td><label for="id_category" class="form-label">Giá trị còn lại để lên hạng</label></td>
+                <td>:&nbsp;&nbsp;0</td>
+            </tr>          
+        </tbody>
+        </table>
+    
+</div>
+
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white; float: left;">
+    <h5>Lịch sử mua hàng</h5>
+    <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+           
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Trạng thái</th>
+                            <th>Giá trị</th>
+                            <th>Nguồn</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.code }}</td>
+                            <td>
+                                {% if order.complete %}
+                                    <span class="btn btn-success btn-sm"></span>
+                                {% else %}
+                                    <span class="btn btn-danger btn-sm"></span>
+                                {% endif %}
+                            </td>
+                            <td>{{ order.total }}</td>
+                            <td>{{ order.source }}</td>
+                        </tr>
+                            {% endfor %}
+
+                    </tbody>
+                </table>
+       
+        </div>
+    </div>
+    
+</div>
+
+
+
+{% endblock content %}
+

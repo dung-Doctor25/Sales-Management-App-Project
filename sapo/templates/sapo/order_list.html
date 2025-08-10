@@ -1,0 +1,120 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<style>
+    body {
+        background-color: rgb(231, 231, 231);
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: absolute; top: 0; left: 249px; right: 0; z-index: 1000;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="{% url 'product_list' %}" style="margin-left: auto;font-family: 'Roboto', sans-serif;"><strong>Danh sách đơn hàng</strong></a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link btn btn-outline-secondary me-2" aria-current="page" href="#"><i class="bi bi-patch-question me-1"></i><font face="Verdana">Trợ giúp</font></a>
+        <a class="nav-link btn btn-outline-secondary me-2" aria-current="page" href="#"><i class="bi bi-chat-heart me-1"></i><font face="Verdana">Góp ý</font></a>
+        <a class="nav-link btn btn-outline-secondary me-2" aria-current="page" href="#"><i class="bi bi-bank me-2"></i><font face="Verdana">Vay vốn kinh doanh</font></a>
+
+      </div>
+  </div>
+</nav>
+
+<div class="container-fluid mt-5">
+
+  <div class="d-flex align-items-center mb-3 justify-content-end">
+    <a href="{% url 'add_order' %}" class="btn btn-outline-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Thêm đơn hàng</a>
+    <a href="{% url 'order_csv' %}" class="btn btn-primary btn-lg ms-2"><i class="bi bi-file-earmark-excel me-2"></i>Xuất file order</a>
+    <a href="{% url 'orderitem_csv' %}" class="btn btn-success btn-lg ms-2"><i class="bi bi-file-earmark-excel me-2"></i>Xuất file orderitem</a>
+    <a href="{% url 'order_import' %}" class="btn btn-primary btn-lg ms-2"><i class="bi bi-file-earmark-excel me-2"></i>Nhập file order</a>
+    <a href="{% url 'orderitem_import' %}" class="btn btn-success btn-lg ms-2"><i class="bi bi-file-earmark-excel me-2"></i>Nhập file orderitem</a>
+  </div>
+  <form method="POST" action="{% url 'order_list' %}" class="d-flex">
+    {% csrf_token %}
+    <select name="complete" class="form-select">
+      <option value="">-- Chọn trạng thái đơn --</option>
+
+      <option value="True">Hoàn thành</option>
+      <option value="False">chưa hoàn thành</option>
+
+
+    </select>
+    <select name="pay" class="form-select">
+      <option value="">-- Chọn trạng thái thanh toán --</option>
+
+      <option value="True">Đã thanh toán</option>
+      <option value="False">Chưa thanh toán</option>
+
+    </select>
+    <div class="container">
+      <button type="submit" class="btn btn-sm btn-outline-primary mt-1" style="padding: 5px 10px;"><i class="bi bi-search me-2"></i>Tìm kiếm</button>
+    </div>
+    </form>
+  <table class="table"> 
+    <thead class="table-info">
+      <tr>
+        <th>Mã đơn hàng</th>
+        <th>Ngày tạo đơn</th>
+        <th>Tên khách hàng</th>
+        <th>Trạng thái đơn hàng</th>
+        <th>Trạng thái thanh toán</th>
+        <th>Khách phải trả</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td class="align-middle">
+            <a href="{{ order.get_absolute_url }}">{{ order.code }}</a>
+        </td>
+        <td class="align-middle">
+
+                {{ order.date_created }}
+          
+        </td>    
+        <td class="align-middle">
+
+                {{ order.customer }}
+
+        </td>
+        <td class="align-middle">
+          <span class="badge rounded-pill 
+                          {% if order.complete == False %}
+                            bg-danger
+                          {% else %}
+                            bg-success
+                          {% endif %}"
+                          >
+
+          </span>
+        </td>
+        <td class="align-middle">
+          <span class="badge rounded-pill 
+                          {% if order.pay == False %}
+                            bg-danger
+                          {% else %}
+                            bg-success
+                          {% endif %}"
+                          >
+
+          </span>
+        </td>
+        <td class="align-middle">
+
+                {{ order.total }}
+        </td>
+      </tr>
+          {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endif %}
+
+
+{% endblock content %}
+

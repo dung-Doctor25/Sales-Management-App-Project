@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h3 class="text-center">Thêm khách hàng</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-success btn-block">Thêm</button>
+                <a href="{% url 'customer_list' %}" class="btn btn-danger btn-block">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content%}

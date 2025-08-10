@@ -1,0 +1,212 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body {
+        background-color: rgb(231, 231, 231);
+    }
+</style>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: absolute; top: 0; left: 249px; right: 0; z-index: 1000;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand nav-link btn btn-outline-secondary " href="{% url 'order_list' %}" style="margin-left: auto;font-family: 'Roboto', sans-serif;"><i class="bi bi-caret-left-fill me-2"></i><strong>Quay lại danh sách đơn hàng</strong></a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="btn btn-outline-danger me-3" href="{% url 'delete_order' order.pk %}">Hủy đơn hàng</a>
+        <a class="btn btn-outline-primary me-3" href="{% url 'update_order' order.pk %}">Sửa đơn hàng</a>
+        <a class="btn btn-primary me-3" href="#">Đổi trả hàng</a>  
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid mt-5">
+<h1>{{ order.code }}</h1>
+<button class="btn btn-secondary btn-sm" onclick="copyToClipboard('{{ order.code }}')">Sao chép</button>
+</div>
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+}
+</script>
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;width: 66%;float: left;">
+    <h5>Thông tin đơn hàng</h5>
+    <hr>
+<div class="container-fluid mt-3">
+    <div class="row mb-3">
+        <div class="col-sm-6 mb-2" style="width: 50%;"> 
+        <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td style="width: 50%;"><label for="id_category" class="form-label">Chính sách giá</label></td>
+                <td style="width: 50%;">:&nbsp;&nbsp;{{ order.price_policy }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_category" class="form-label">Bán tại</label></td>
+                <td>:&nbsp;&nbsp;{{ order.sale_location }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_brand" class="form-label">Bán bởi</label></td>
+                <td>:&nbsp;&nbsp;{{ order.employee_sale}}</td>
+            </tr>
+            <tr>
+                <td><label for="id_brand" class="form-label">Hẹn giao hàng</label></td>
+                <td>:&nbsp;&nbsp;{{ order.ship_date|date:"d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <td style="width: 50%;"><label for="id_category" class="form-label">Nguồn</label></td>
+                <td style="width: 50%;">:&nbsp;&nbsp;{{ order.source }}</td>
+            </tr>
+        </tbody>
+        </table>
+
+        </div>
+
+        <div class="col-sm-6 mb-2" style="width: 50%;">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td><label for="id_category" class="form-label">Kênh bán hàng</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.chanel }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_brand" class="form-label">Ngày bán</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.date_created|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_brand" class="form-label">Đường dẫn</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.path }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_brand" class="form-label">Tham chiếu</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.reference }}</td>
+                    </tr>
+                </tbody>
+                </table>
+
+        </div>
+        <div class="col-sm-6 mb-2"style="width: 35%;">
+            <img src="{{ product.image.url }}" alt="{{ product.image }}" class="img-fluid rounded" >
+        </div>
+    </div>
+</div>
+</div>
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;width: 33%; float: right;">
+    <h5>Thông tin khách hàng</h5>
+    <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+            <div class="col-sm-6 mb-2" style="width: 100%;"> 
+            <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td style="width: 50%;"><label for="id_code" class="form-label">Tên khách hàng</label></td>
+                    <td style="width: 50%;">:&nbsp;&nbsp;{{ order.customer }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Địa chỉ giao hàng</label></td>
+                    <td>:&nbsp;&nbsp;{{ order.ship_address }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Số điện thoại</label></td>
+                    <td>:&nbsp;&nbsp;{{ order.customer.phone }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Địa chỉ</label></td>
+                    <td>:&nbsp;&nbsp;{{ order.customer.address }}</td>
+                </tr>
+
+
+            </tbody>
+            </table>
+    
+            </div>
+    
+            <div class="col-sm-6 mb-2"style="width: 40%;">
+                <img src="{{ product.image.url }}" alt="{{ product.image }}" class="img-fluid rounded" >
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white; height: 280px; float: left;">
+    <h5>CÒN CÁI LIÊN KẾT VS BẢNG KHÁC MÀ ĐỂ SAU</h5>
+    <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+            <div class="col-sm-6 mb-2" style="width: 60%;"> 
+            <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Giá bán lẻ</label></td>
+                    <td>:&nbsp;&nbsp;{{ product.retail_price }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%;"><label for="id_code" class="form-label">Giá bán buôn</label></td>
+                    <td style="width: 50%;">:&nbsp;&nbsp;{{ product.wholesale_price }}</td>
+                </tr>
+                <tr>
+                    <td><label for="id_qr_code" class="form-label">Giá nhập</label></td>
+                    <td>:&nbsp;&nbsp;{{ product.import_price }}</td>
+                </tr>
+
+            </tbody>
+            </table>
+    
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white; float: left;">
+    <h5>Lịch sử mua hàng</h5>
+    <hr>
+    <div class="container-fluid mt-3">
+        <div class="row mb-3">
+       
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số luong</th>
+                            <th>Ngày thêm</th>
+                            <th>Chỉnh sửa</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for orderitem in orderitems %}
+                        <tr>
+                            <td>{{ orderitem.order.code }}</td>
+                            <td>{{ orderitem.product.name }}</td>
+                            <td>{{ orderitem.quantity }}</td>
+                            <td>{{ orderitem.date_added }}</td>
+                            <td>
+                                <a href="{% url 'update_orderitem' orderitem.id  %}" class="btn btn-success btn-sm">Cập nhật</a>
+                                <a href="{% url 'delete_orderitem' orderitem.id  %}" class="btn btn-danger btn-sm">Xóa</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6" style="text-align: center;">
+                                    <div style="display: flex; justify-content: center; width: 100%;">
+                                        <a href="{% url 'add_orderitem'%}" class="btn btn-primary" style="flex-grow: 1;">Thêm sản phẩm</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </tbody>
+                </table>
+          
+        </div>
+    </div>
+    
+</div>
+
+{% endblock content %}
+

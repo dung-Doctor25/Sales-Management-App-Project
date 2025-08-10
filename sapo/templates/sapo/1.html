@@ -1,0 +1,293 @@
+
+    {% if request.user.is_authenticated  %}
+    <h1>Lets chat! {{ request.user }}</h1>
+    {% endif %}
+    <form id="form">
+        <input type="text" name="message"/>
+    </form>
+    <br>
+    <div id="messages" style="overflow-y: scroll; height: 500px;"></div>
+    <script>
+        document.getElementById('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var message = document.getElementById('form').elements['message'].value;
+            
+            
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        });
+    </script>
+
+    <script type="text/javascript">
+        let url = `ws://${window.location.host}/ws/socket-server/`
+        console.log(url)
+
+        const chatSocket = new WebSocket(url)
+
+
+      
+        
+        
+
+        
+
+        chatSocket.onmessage = function(e){
+            let data = JSON.parse(e.data)
+            console.log('Data:', data)
+
+           if (/Lịch sử đơn hàng/i.test(data.message)) {
+            fetchHistory();
+            let messages = document.getElementById('messages')
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user} :${data.message}</p>
+                                    </div>`)
+            }
+            else if (/Đặt hàng/i.test(data.message)) {
+                createOrder();
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user} đã tạo đơn hàng</p>
+                                    </div>`)
+                
+                
+            }
+            else if (/test/i.test(data.message)) {
+                
+                console.log('currentId', localStorage.getItem('orderId'))
+            }
+            else if (/sản phẩm/i.test(data.message)) {
+                let currentId = localStorage.getItem('orderId');
+                fetch('/api/products/')
+                    .then(response => response.json())
+                    .then(data => {
+                        let products = document.getElementById('messages')
+                        
+                        let dropdownMenu = document.createElement('ul')
+
+                        
+                        products.appendChild(dropdownMenu)
+                        console.log(products)
+
+                        data.results.forEach(product => {
+
+                            let dropdownItem = document.createElement('li')
+                            dropdownItem.classList.add('dropdown-item')
+                            dropdownItem.innerHTML = `<button onclick="addProductToOrder(${product.id}, ${currentId}, '${product.name}')">${product.name}</button>`
+
+                            dropdownMenu.appendChild(dropdownItem)
+                        })
+
+                        
+                    })
+                    messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user} :${data.message}</p>
+                                    </div>`)
+            }
+            else if (/khách hàng/i.test(data.message)) {
+                fetch('http://127.0.0.1:8000/api/customers/')
+                    .then(response => response.json())
+                    .then(data => {
+                        let customers = document.getElementById('messages')
+                        let currentId = localStorage.getItem('orderId');
+                        let dropdownMenu = document.createElement('ul')
+
+                        
+                        customers.appendChild(dropdownMenu)
+                        console.log(customers)
+
+                        data.results.forEach(customer => {
+
+                            let dropdownItem = document.createElement('li')
+                            dropdownItem.classList.add('dropdown-item')
+                            dropdownItem.innerHTML = `<button onclick="addCustomerToOrder(${customer.id}, ${currentId}, '${customer.name}')">${customer.name}</button>`
+
+                            dropdownMenu.appendChild(dropdownItem)
+                        })
+
+                        
+                    })
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user} :${data.message}</p>
+                                    </div>`)
+            }
+                    
+            else if (/Hoàn thành đơn hàng/i.test(data.message) ) {
+                localStorage.removeItem('orderId');
+                let messages = document.getElementById('messages')
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user} đã hoàn thành đơn</p>
+                                    </div>`)
+            }
+            else if(/Hủy đơn hàng/i.test(data.message)){
+                let currentId = localStorage.getItem('orderId');
+                fetch(`http://127.0.0.1:8000/api/orders/${currentId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Token d7469bf5659f709ce58e5790755d555725a9779c',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.removeItem('orderId');
+                    let messages = document.getElementById('messages')
+                    messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user} đã hủy đơn</p>
+                                    </div>`)
+                })
+            }
+
+            
+            
+            else if(data.type === 'chat'){
+                let messages = document.getElementById('messages')
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                        <p>${data.user}:${data.message}</p>
+                                    </div>`)
+            }
+
+            
+            
+            function fetchHistory() {
+                fetch('http://127.0.0.1:8000/api/orders/', {
+                    headers: {
+                        'Authorization': 'Token d7469bf5659f709ce58e5790755d555725a9779c'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    renderHistory(data.results);
+                });
+            }
+            
+            
+            function renderHistory(orders) {
+                let table = document.createElement('table');
+                table.classList.add('table', 'table-striped', 'table-hover');
+                let thead = document.createElement('thead');
+                thead.classList.add('table-info');
+                let headerRow = document.createElement('tr');
+                ['ID đơn hàng','Mã đơn hàng', 'Tên khách hàng', 'Ngày tạo đơn'].forEach(heading => {
+                    let th = document.createElement('th');
+                    th.textContent = heading;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                let tbody = document.createElement('tbody');
+                orders.forEach(order => {
+                    let row = document.createElement('tr');
+                    row.classList.add('align-middle');
+                    let idCell = document.createElement('td');
+                    idCell.textContent = order.id;
+                    let codeCell = document.createElement('td');
+                    codeCell.textContent = order.code;
+                    let customercell = document.createElement('td')
+                    
+                    fetch(`http://127.0.0.1:8000/api/customers/${order.customer}`, {
+                        headers: {
+                            'Authorization': 'Token d7469bf5659f709ce58e5790755d555725a9779c'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        customercell.textContent = data.name
+                    })
+                    let date_createdcell = document.createElement('td');
+                    let date = new Date(order.date_created);
+                    let day = date.getDate();
+                    let month = date.toLocaleString('default', { month: 'short' });
+                    let year = date.getFullYear();
+                    date_createdcell.textContent = `${day} ${month} ${year}`;
+                    row.appendChild(idCell);
+                    row.appendChild(codeCell);
+                    row.appendChild(customercell)
+                    row.appendChild(date_createdcell);
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                let messages = document.getElementById('messages');
+                messages.appendChild(table);
+            }
+        }
+        
+        function createOrder() {
+            fetch('http://127.0.0.1:8000/api/orders/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': 'Token d7469bf5659f709ce58e5790755d555725a9779c'
+                },
+                body: JSON.stringify({
+                    'customer': 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                let currentId = data.id;
+                localStorage.setItem('orderId', currentId);
+            });
+        }
+        function addProductToOrder(productId, orderId,productName) {
+            console.log(productId, orderId)
+            fetch(`http://127.0.0.1:8000/api/ordersitems/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': 'Token d7469bf5659f709ce58e5790755d555725a9779c'
+                },
+                body: JSON.stringify({
+                    'order': orderId,
+                    'product': productId,
+                    'quantity': 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            });
+                let messages = document.getElementById('messages')
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                    <p>Bạn đã thêm sản phẩm ${productName} vào đơn hàng</p>
+                                </div>`);
+        };
+        
+        function addCustomerToOrder(customerId, orderId,customerName) {
+            console.log(customerId, orderId)
+            fetch(`http://127.0.0.1:8000/api/orders/${orderId}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': 'Token d7469bf5659f709ce58e5790755d555725a9779c'
+                },
+                body: JSON.stringify({
+                    'customer': customerId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            });
+                let messages = document.getElementById('messages')
+                messages.insertAdjacentHTML('beforeend', `<div>
+                                    <p>Khách hàng của đơn là ${customerName}</p>
+                                </div>`);
+        };
+        
+        
+        let form = document.getElementById('form')
+        form.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            let message = e.target.message.value 
+            
+            chatSocket.send(JSON.stringify({
+                'message':message,
+                'user': '{{request.user}}'
+            }))
+            form.reset()
+        })
+
+    </script>
+

@@ -1,0 +1,297 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<style>
+    body {
+        background-color: rgb(231, 231, 231);
+    }
+
+    .total, .discount, .amount-due, .customer-payment, .change-due {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+    .amount-due, .change-due {
+        font-weight: bold;
+    }
+    .payment-btn {
+        width: 100%;
+        font-size: 1.2rem;
+    }
+
+    #content {
+        display: none;
+    }
+</style>
+
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: absolute; top: 0; left: 249px; right: 0; z-index: 1000;">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand nav-link btn btn-outline-secondary " href="#" style="margin-left: auto;font-family: 'Roboto', sans-serif;"><i class="bi bi-caret-left-fill me-2"></i><strong>Quay lại danh sách sản phẩm</strong></a>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav ms-auto">
+              <a class="btn btn-outline-secondary me-3" href="#" role="button">Thoát</a>
+              <button class="btn btn-primary me-3" type="button">Lưu và in mã vạch</button>
+              <input type="submit" value="Lưu" class="btn btn-success me-3">
+          </div>
+        </div>
+      </nav>
+      <!-- ----------------------------------------------------------------- -->
+    <br><br>
+    <h1>Bạn đang làm việc với đơn {% if order_direct.code %}{{ order_direct.code }}{% else %}----------------{% endif %}</h1>
+
+    <h2>ID: {{ order_direct.id }}</h2>
+
+        
+    
+    <div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white; width: 60%; float: left;">
+        <h5><strong>Đơn hàng</strong></h5>
+        <div class="form-group">
+            <label for="add-customer">Thêm sản phẩm vào đơn </label>
+            <div class="input-group mb-3">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 91%;">
+
+                Chọn sản phẩm
+              </button>
+              <ul class="dropdown-menu" style="min-width: 600px;">
+              
+                {% for product in products %}
+                <button data-product="{{product.id}}" data-action="add" class="dropdown-item update-order" href="#">{{ product.name }}</button>
+                {% endfor %}
+              </ul>
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#myModal" 
+                
+                    style="margin-left: 10px;" >
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+
+        </div>
+        <hr>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Ảnh</th>
+                        <th>Mã SKU</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Đơn vị</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for item in items %}
+                    <tr class="product-row">
+                        <td>{{ item.product.id }}</td></td>
+                        <td><img src="{%if item.product.image %}{{ item.product.image.url }}{% endif %}" alt="{{item.product.name}}" width="50" height="50"></td>
+                        <td>{{ item.product.code }}</td>
+                        <td title="{{ item.product.name }}">{{ item.product.name|truncatechars:10 }}{% if item.product.name|length > 20 %}...{% endif %}</td>
+                        
+                        <td>{{ item.product.unit }}</td>
+                        <td>
+                            <p class="quantity"><i class="btn btn-sm bi bi-arrow-up update-order" data-product="{{item.product.id}}" data-action="add"></i>{{item.quantity}}<i class="btn btn-sm bi bi-arrow-down update-order" data-product="{{item.product.id}}" data-action="remove"></i></p>
+                            
+
+                        </td>
+                        <td>{{ item.product.retail_price }}</td>
+                        <td>{{ item.get_total }}</td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+
+    </div>
+
+
+    <div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white; width: 39%; float: right;">
+                
+
+        <div class="form-group">
+            <label for="add-customer">Thêm khách hàng vào đơn </label>
+            <div class="input-group mb-3">
+                
+                    <button class ="btn btn-outline-secondary  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 87%;" >
+                        Chọn khách hàng
+                    </button>
+                    <ul class="dropdown-menu" style="min-width: 395px;">
+                        {% for customer in customers %}
+                        
+                        <button data-customer="{{customer.id}}" data-action="add" class="dropdown-item update-order" href="#">{{ customer.name }}</button>
+                        {% endfor %}
+                    </ul>
+                
+                
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal"
+                style="margin-left: 10px;">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ order_direct.customer.name }}</h4>
+            <small class="text-muted">Khách hàng</small>
+        </div>
+       
+        </div>
+        <br>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="delivery">
+            <label class="form-check-label" for="delivery">Giao hàng</label>
+        </div>
+        <hr>
+        <div class="total">Tổng tiền: ({{ order_direct.get_cart_items }} sản phẩm) <span style="float: right;">{{ order_direct.get_cart_total }}</span></div>
+
+        <div class="discount">Chiết khấu<span style="float: right;">0</span></div>
+
+        <div class="amount-due">KHÁCH PHẢI TRẢ <span style="float: right;">{{ order_direct.get_cart_total }}</span></div>
+        <div class="customer-payment">Tiền khách đưa <span style="float: right;">0</span></div>
+        <div class="customer-payment text-muted">Tiền mặt <span style="float: right;">0</span></div>
+        <div class="change-due">Tiền thừa trả khách <span style="float: right;">{{ order_direct.get_cart_total }}</span></div>
+        <hr>
+        <div class="form-group">
+            <textarea class="form-control" placeholder="Nhập ghi chú đơn hàng"></textarea>
+        </div>
+        <br>
+        <button class="btn btn-success payment-btn update-order" data-action="payment" >THANH TOÁN </button>
+                    
+
+    </div>
+
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------- -->
+<!-- customer Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+       <div class="modal-dialog" role="document">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h5 class="modal-title" id="exampleModalLabel">Thêm khách hàng</h5>
+                   <button type="button" class="close" style="position: absolute; right: 20px;" data-dismiss="modal" aria-label="Close">
+                       <span aria-hidden="true">&times;</span>
+                   </button>
+               </div>
+               <!-- ----------modal body----------- -->
+           <div class="modal-body">
+               <form method="POST" id="cus_form" action="">
+                   {% csrf_token %}
+                   <input type="hidden" name="customer_id" id="customer_id" value="cus">
+                   {{ cus_form.code }}
+                   {{ cus_form.name }}              
+                   <!-- --------------------- -->
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                       <button class="btn btn-primary" type="submit">Save changes</button>
+                   </div>
+               </form>
+         </div>
+       </div>
+     </div>
+    </div>
+
+
+    <!-- products_Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm sản phẩm</h5>
+                    <button type="button" class="close" style="position: absolute; right: 20px;" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form method="POST" id="pro_form" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" id="product_id" value="pro">
+                        {{ pro_form.code }}
+                        {{ pro_form.name }}
+                        {{ pro_form.unit }}              
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="$('#exampleModal').modal('hide');$('#myModal form').submit();">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- order_Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm đơn hàng</h5>
+                    <button type="button" class="close" style="position: absolute; right: 20px;" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form method="POST" id="order_form" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" id="order_id" value="order">
+                        {{ order_form.code }}
+                        {{ order_form.customer }}
+                    
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="$('#orderModal').modal('hide');$('#orderModal form').submit();">T o nh  n  h ng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{%endif%}
+
+
+
+{% endblock content%}

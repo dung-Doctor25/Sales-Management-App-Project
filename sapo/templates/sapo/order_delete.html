@@ -1,0 +1,97 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body {
+        background-color: rgb(231, 231, 231);
+    }
+</style>
+<!-- <div class="container">
+    <div class="col-auto">
+        <div class="col-md-6 offset-md-3"> -->
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="col">
+                    <h1 style="text-align: center;">Bạn muốn xóa đơn hàng: {{ order.code }}?</h1>
+                    <hr>
+                    <div class="row">
+                        <button type="submit" class="btn btn-danger btn-block btn-lg">Xóa</button>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <a href="{% url 'order_detail' order.pk %}" class="btn btn-secondary btn-block btn-lg">Hủy</a>
+                    </div>
+                </div>
+            </form>
+        <!-- </div>
+    </div>
+</div> -->
+
+<div class="container-fluid mt-5" style="border: 1px solid white; border-radius: 5px; padding: 20px; background-color: white;width: 66%;float: left;">
+    <h5>Thông tin đơn hàng</h5>
+    <hr>
+<div class="container-fluid mt-3">
+    <div class="row mb-3">
+        <div class="col-sm-6 mb-2" style="width: 50%;"> 
+        <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td style="width: 50%;"><label for="id_category" class="form-label">Chính sách giá</label></td>
+                <td style="width: 50%;">:&nbsp;&nbsp;{{ order.price_policy }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_category" class="form-label">Bán tại</label></td>
+                <td>:&nbsp;&nbsp;{{ order.sale_location }}</td>
+            </tr>
+            <tr>
+                <td><label for="id_brand" class="form-label">Bán bởi</label></td>
+                <td>:&nbsp;&nbsp;{{ order.employee_sale}}</td>
+            </tr>
+            <tr>
+                <td><label for="id_brand" class="form-label">Hẹn giao hàng</label></td>
+                <td>:&nbsp;&nbsp;{{ order.ship_date|date:"d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <td style="width: 50%;"><label for="id_category" class="form-label">Nguồn</label></td>
+                <td style="width: 50%;">:&nbsp;&nbsp;{{ order.source }}</td>
+            </tr>
+        </tbody>
+        </table>
+
+        </div>
+
+        <div class="col-sm-6 mb-2" style="width: 50%;">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <td><label for="id_category" class="form-label">Kênh bán hàng</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.chanel }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_brand" class="form-label">Ngày bán</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.date_created|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_brand" class="form-label">Đường dẫn</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.path }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_brand" class="form-label">Tham chiếu</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.reference }}</td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_qr_code" class="form-label">Số lượng</label></td>
+                        <td>:&nbsp;&nbsp;{{ order.quantity }}</td>
+                    </tr>
+                </tbody>
+                </table>
+
+        </div>
+        <div class="col-sm-6 mb-2"style="width: 35%;">
+            <img src="{{ product.image.url }}" alt="{{ product.image }}" class="img-fluid rounded" >
+        </div>
+    </div>
+</div>
+</div>
+
+{% endblock content%}
